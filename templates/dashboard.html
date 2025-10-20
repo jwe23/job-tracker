@@ -1,1 +1,105 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Job Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Job Tracker</h1>
+            <div class="nav-right">
+                <span>Welcome, {{ username }}</span>
+                <a href="/logout" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>Your Job Applications</h2>
+            
+            <div class="add-job-form">
+                <h3>Add New Application</h3>
+                <form method="POST" action="/add_job">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="position">Position</label>
+                            <input type="text" id="position" name="position" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date_applied">Date Applied</label>
+                            <input type="date" id="date_applied" name="date_applied" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" name="status" required>
+                                <option value="Applied">Applied</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Offer">Offer</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="url">Application URL (optional)</label>
+                        <input type="url" id="url" name="url">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add Application</button>
+                </form>
+            </div>
+            
+            <div class="jobs-list">
+                {% if jobs %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Date Applied</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                            <tr class="status-{{ job['status'].lower() }}">
+                                <td>{{ job['company'] }}</td>
+                                <td>{{ job['position'] }}</td>
+                                <td>{{ job['date_applied'] }}</td>
+                                <td><span class="status-badge">{{ job['status'] }}</span></td>
+                                <td>{{ job['notes'] }}</td>
+                                <td>
+                                    <a href="/delete_job/{{ job['id'] }}" class="btn-delete" onclick="return confirm('Delete this application?')">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-jobs">No applications yet. Add your first one above!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
